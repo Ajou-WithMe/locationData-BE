@@ -1,6 +1,7 @@
 package ajou.withme.locationData.dto;
 
 import ajou.withme.locationData.domain.Location;
+import ajou.withme.locationData.domain.User;
 import lombok.Data;
 
 @Data
@@ -14,10 +15,11 @@ public class SaveLocationDto {
     // userName
     private String name;
 
-    public Location toEntity() {
+    public Location toEntity(User user) {
         return Location.builder()
                 .latitude(this.latitude)
                 .longitude(this.longitude)
+                .user(user)
                 .build();
     }
 }
