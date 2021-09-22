@@ -23,10 +23,11 @@ public class Location {
     // 경도
     private Double longitude;
 
-    // userName
-    private String name;
-
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createdAt;
+
+    @ManyToOne
+    @JoinColumn
+    private User user;
 }

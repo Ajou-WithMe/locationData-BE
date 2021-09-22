@@ -18,7 +18,6 @@ public class SaveLocationDto {
         return Location.builder()
                 .latitude(this.latitude)
                 .longitude(this.longitude)
-                .name(this.name)
                 .build();
     }
 }
