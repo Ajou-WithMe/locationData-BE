@@ -1,7 +1,10 @@
 package ajou.withme.locationData.domain;
 
+import lombok.Builder;
+
 import javax.persistence.*;
 
+@Builder
 @Entity
 public class User {
 
