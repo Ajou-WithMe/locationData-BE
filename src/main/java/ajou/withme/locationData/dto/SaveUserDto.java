@@ -1,13 +1,12 @@
 package ajou.withme.locationData.dto;
 
 import ajou.withme.locationData.domain.User;
+import lombok.Data;
 
-import javax.persistence.Column;
 
+@Data
 public class SaveUserDto {
     private String name;
-    private Long distance;
-    private Long time;
 
     public User toEntity() {
         return User.builder()

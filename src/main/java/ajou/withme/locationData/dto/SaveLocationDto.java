@@ -12,6 +12,8 @@ public class SaveLocationDto {
     // 경도
     private Double longitude;
 
+    private Double speed;
+
     // userName
     private String name;
 
