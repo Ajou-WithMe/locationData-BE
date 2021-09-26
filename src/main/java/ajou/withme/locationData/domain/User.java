@@ -21,8 +21,15 @@ public class User {
     @Column(unique = true)
     private String uid;
 
-    private Long distance;
+    private Double distance;
 
     private Long time;
 
+    public void addDistance(Double distance) {
+        this.distance += distance;
+    }
+
+    public void addTime(Long time) {
+        this.time += time;
+    }
 }

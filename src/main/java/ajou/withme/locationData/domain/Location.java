@@ -24,7 +24,6 @@ public class Location {
     private Double longitude;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
     private Date createdAt;
 
     @ManyToOne

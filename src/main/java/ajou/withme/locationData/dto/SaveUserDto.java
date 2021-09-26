@@ -11,7 +11,7 @@ public class SaveUserDto {
     public User toEntity() {
         return User.builder()
                 .name(this.name)
-                .distance(0L)
+                .distance(0D)
                 .time(0L)
                 .uid(null)
                 .build();
