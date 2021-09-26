@@ -4,6 +4,8 @@ import ajou.withme.locationData.domain.Location;
 import ajou.withme.locationData.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LocationService {
 
@@ -15,5 +17,9 @@ public class LocationService {
 
     public Location saveLocation(Location location) {
         return locationRepository.save(location);
+    }
+
+    public void saveAll(List<Location> locationEntity) {
+        locationRepository.saveAll(locationEntity);
     }
 }

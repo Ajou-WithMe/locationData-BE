@@ -25,10 +25,10 @@ import java.util.List;
 @RequestMapping("/location")
 public class LocationController {
 
-    private final LocationService locationService;
     private final UserService userService;
     private final UserRedisService userRedisService;
     private final LocationJdbcRepository locationJdbcRepository;
+    private final LocationService locationService;
 
     @PostMapping
     public ResFormat saveLocation(@RequestBody SaveLocationDto saveLocationDto) {
@@ -94,8 +94,6 @@ public class LocationController {
         userRedisService.saveUserRedis(userRedis);
         log.error("------레디스캐시 세이브------");
 
-//        Location savedlocation = locationService.saveLocation(saveLocationDto.toEntity(userByName));
-
         return new ResFormat(true, 201L, userRedis.getCurLocation());
     }
 
@@ -105,6 +103,46 @@ public class LocationController {
         UserRedis userRedis = userRedisService.findUserRedisById(name);
 
         return new ResFormat(true, 200L, userRedis);
+    }
+
+    @PostMapping("/test")
+    public ResFormat performanceTest() {
+        List<Location> locationEntity = new LinkedList<>();
+
+        for (int i=0; i<10000; i++){
+            locationEntity.add(new Location(null,10.123,11.123,new Timestamp(new Date().getTime()),null));
+        }
+
+//        long start = System.currentTimeMillis();
+//        for (Location location:
+//                locationEntity) {
+//            locationService.saveLocation(location);
+//        }
+//        long end = System.currentTimeMillis();
+//        System.out.println("10000개 데이터 각각 Insert 수행시간: " + (end - start)*1000 + " s");
+//
+//
+//
+//        Long start = System.currentTimeMillis();
+//        locationService.saveAll(locationEntity);
+//        Long end = System.currentTimeMillis();
+//        System.out.println("10000개 데이터 jpa saveAll 수행시간: " + (end - start)/1000 + " s");
+
+
+        try {
+            Long start = System.currentTimeMillis();
+            locationJdbcRepository.saveAll(locationEntity);
+            Long end = System.currentTimeMillis();
+            System.out.println("10000개 데이터 Batch (batch block = 720) 수행시간: " + (end - start)/1000 + " s");
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(e);
+        }
+
+
+
+        return new ResFormat(true, 200L, null);
     }
 
 }

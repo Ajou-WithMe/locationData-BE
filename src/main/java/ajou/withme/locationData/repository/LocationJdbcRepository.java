@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -20,7 +19,8 @@ public class LocationJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private int batchSize = 36;
+    @Value("${batchSize}")
+    private int batchSize;
 
     public void saveAll(List<Location> items) {
         int batchCount = 0;
@@ -45,7 +45,7 @@ public class LocationJdbcRepository {
                         ps.setDouble(1, subItems.get(i).getLatitude());
                         ps.setDouble(2, subItems.get(i).getLongitude());
                         ps.setTimestamp(3, new Timestamp(subItems.get(i).getCreatedAt().getTime()));
-                        ps.setLong(4, subItems.get(i).getUser().getId());
+                        ps.setLong(4, 1L);
                     }
                     @Override
                     public int getBatchSize() {
