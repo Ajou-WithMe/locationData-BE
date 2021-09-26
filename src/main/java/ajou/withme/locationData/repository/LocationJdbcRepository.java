@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,13 +38,13 @@ public class LocationJdbcRepository {
     }
 
     private int batchInsert(int batchSize, int batchCount, List<Location> subItems) {
-        jdbcTemplate.batchUpdate("INSERT INTO ITEM_JDBC (`latitude`, `longitude`, `createdAt`, `user`) VALUES (?, ?, ?, ?)",
+        jdbcTemplate.batchUpdate("INSERT INTO location (`latitude`, `longitude`, `created_at`, `user_id`) VALUES (?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         ps.setDouble(1, subItems.get(i).getLatitude());
                         ps.setDouble(2, subItems.get(i).getLongitude());
-                        ps.setDate(3, (Date) subItems.get(i).getCreatedAt());
+                        ps.setTimestamp(3, new Timestamp(subItems.get(i).getCreatedAt().getTime()));
                         ps.setLong(4, subItems.get(i).getUser().getId());
                     }
                     @Override

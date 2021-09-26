@@ -5,6 +5,7 @@ import ajou.withme.locationData.dto.SaveLocationDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @RedisHash("user")
+@Slf4j
 public class UserRedis {
 
     @Id
@@ -31,7 +33,8 @@ public class UserRedis {
         double locationDistance = Math.sqrt(Math.pow(latitudeAbs, 2) + Math.pow(longitudeAbs, 2));
 
         // 약 10미터 이상 차이가 나면 업데이트
-        if (0.0001 < locationDistance) {
+        if (0.0001 > locationDistance) {
+            log.error("------직전위치랑 차이없음------");
             return;
         }
 
@@ -39,6 +42,7 @@ public class UserRedis {
         this.time += 5;
         this.curLocation = location;
         locations.add(location);
+        log.error("------위치업데이트------");
 
     }
 

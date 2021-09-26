@@ -13,7 +13,6 @@ public class LocationService {
         this.locationRepository = locationRepository;
     }
 
-
     public Location saveLocation(Location location) {
         return locationRepository.save(location);
     }

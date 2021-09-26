@@ -12,11 +12,9 @@ import ajou.withme.locationData.service.UserService;
 import ajou.withme.locationData.util.ResFormat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +57,8 @@ public class LocationController {
                     .distance(distance)
                     .time(5L)
                     .build();
+            log.error("------레디스캐시 비어있음------");
+
         } else {
             // 현재 위치랑 차이가 크지 않으면 버림. 레디스에 안넣음.
             userRedis.updateUserRedis(distance, location);
@@ -87,33 +87,24 @@ public class LocationController {
             userRedis.resetLocations();
             userRedis.resetDistance();
             userRedis.resetTime();
+
+            log.error("------batch 작업------");
         }
 
         userRedisService.saveUserRedis(userRedis);
+        log.error("------레디스캐시 세이브------");
 
-        Location savedlocation = locationService.saveLocation(saveLocationDto.toEntity(userByName));
+//        Location savedlocation = locationService.saveLocation(saveLocationDto.toEntity(userByName));
 
         return new ResFormat(true, 201L, userRedis.getCurLocation());
     }
 
-//    @PostMapping("/test")
-//    public ResFormat test() {
-//
-//        List<Location> locations = new LinkedList<>();
-//
-//        locations.add(new Location());
-//        locations.add(new Location(1111.213, 133.234, new Date()));
-//
-//        UserRedis userRedis = UserRedis.builder()
-//                .curLocation(new Location(15.213, 111.234, new Date()))
-//                .id("taek")
-//                .distance(999.42)
-//                .time(12L)
-//                .locations(locations)
-//                .build();
-//
-//        UserRedis userRedis1 = userRedisService.saveUserRedis(userRedis);
-//
-//        return new ResFormat(true, 201L, userRedis1);
-//    }
+
+    @GetMapping("/redis")
+    public ResFormat getUserRedis(@RequestParam String name) {
+        UserRedis userRedis = userRedisService.findUserRedisById(name);
+
+        return new ResFormat(true, 200L, userRedis);
+    }
+
 }
