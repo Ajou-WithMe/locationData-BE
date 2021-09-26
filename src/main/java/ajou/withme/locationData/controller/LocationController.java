@@ -129,16 +129,11 @@ public class LocationController {
 //        System.out.println("10000개 데이터 jpa saveAll 수행시간: " + (end - start)/1000 + " s");
 
 
-        try {
-            Long start = System.currentTimeMillis();
-            locationJdbcRepository.saveAll(locationEntity);
-            Long end = System.currentTimeMillis();
-            System.out.println("10000개 데이터 Batch (batch block = 720) 수행시간: " + (end - start)/1000 + " s");
+        Long start = System.currentTimeMillis();
+        locationJdbcRepository.saveAll(locationEntity);
+        Long end = System.currentTimeMillis();
+        System.out.println("10000개 데이터 Batch (batch block = 720) 수행시간: " + (end - start)/1000 + " s");
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(e);
-        }
 
 
 
