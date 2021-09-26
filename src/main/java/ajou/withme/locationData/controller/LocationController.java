@@ -5,6 +5,7 @@ import ajou.withme.locationData.domain.Location;
 import ajou.withme.locationData.domain.User;
 import ajou.withme.locationData.domain.UserRedis;
 import ajou.withme.locationData.dto.SaveLocationDto;
+import ajou.withme.locationData.repository.LocationJdbcRepository;
 import ajou.withme.locationData.service.LocationService;
 import ajou.withme.locationData.service.UserRedisService;
 import ajou.withme.locationData.service.UserService;
@@ -29,6 +30,7 @@ public class LocationController {
     private final LocationService locationService;
     private final UserService userService;
     private final UserRedisService userRedisService;
+    private final LocationJdbcRepository locationJdbcRepository;
 
     @PostMapping
     public ResFormat saveLocation(@RequestBody SaveLocationDto saveLocationDto) {
@@ -44,10 +46,10 @@ public class LocationController {
 
         Double distance = saveLocationDto.getSpeed() * 3.6 * 5;
 
-        Location location = new Location(null, saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), new Date(), userByName);
+        LocationRedis location = new LocationRedis(saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), new Date());
 
         if (userRedis == null) {
-            List<Location> locationRedisList = new LinkedList<>();
+            List<LocationRedis> locationRedisList = new LinkedList<>();
             locationRedisList.add(location);
 
             userRedis = UserRedis.builder()
@@ -63,14 +65,23 @@ public class LocationController {
         }
 
         // 만약 리스트 숫자가 일정이상(ex) 36개 3분)이 되면 배치작업으로 다 넣어버림. -> user에 거리, 시간. location
-        if (userRedis.getLocations().size() > 36) {
+        if (userRedis.getLocations().size() >= 36) {
             // user update
             userByName.addTime(userRedis.getTime());
             userByName.addDistance(userRedis.getDistance());
             userService.saveUser(userByName);
 
             // batch location 넣기
-            List<Location> locations = userRedis.getLocations();
+            List<LocationRedis> locations = userRedis.getLocations();
+            List<Location> locationEntity = new LinkedList<>();
+
+            for (LocationRedis curLocationRedis : locations
+            ) {
+                Location curLocation = curLocationRedis.toEntity(userByName);
+                locationEntity.add(curLocation);
+            }
+
+            locationJdbcRepository.saveAll(locationEntity);
 
             // userRedis 초기화
             userRedis.resetLocations();

@@ -15,12 +15,11 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class locationJdbcRepository{
+public class LocationJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${batchSize}")
-    private int batchSize;
+    private int batchSize = 36;
 
     public void saveAll(List<Location> items) {
         int batchCount = 0;

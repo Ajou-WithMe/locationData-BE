@@ -1,5 +1,7 @@
 package ajou.withme.locationData.dao;
 
+import ajou.withme.locationData.domain.Location;
+import ajou.withme.locationData.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +19,12 @@ public class LocationRedis {
 
     private Date createdAt;
 
+    public Location toEntity(User user) {
+        return Location.builder()
+                .user(user)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
+                .createdAt(this.createdAt)
+                .build();
+    }
 }

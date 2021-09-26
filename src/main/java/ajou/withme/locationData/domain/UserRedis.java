@@ -21,10 +21,10 @@ public class UserRedis {
 
     private Double distance;
     private Long time;
-    private Location curLocation;
-    private List<Location> locations;
+    private LocationRedis curLocation;
+    private List<LocationRedis> locations;
 
-    public void updateUserRedis(Double distance, Location location) {
+    public void updateUserRedis(Double distance, LocationRedis location) {
 
         double latitudeAbs = Math.abs(this.curLocation.getLatitude() - location.getLatitude());
         double longitudeAbs = Math.abs(this.curLocation.getLongitude() - location.getLongitude());
