@@ -1,6 +1,7 @@
 package ajou.withme.locationData.controller;
 
 import ajou.withme.locationData.domain.User;
+import ajou.withme.locationData.dto.IsExistUserDto;
 import ajou.withme.locationData.dto.SaveUserDto;
 import ajou.withme.locationData.service.UserService;
 import ajou.withme.locationData.util.ResFormat;
@@ -23,8 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/exist")
-    public ResFormat isNotExistUserByName(@RequestParam String name) {
-        User userByName = userService.findUserByName(name);
+    public ResFormat isNotExistUserByName(@RequestBody IsExistUserDto isExistUserDto) {
+        User userByName = userService.findUserByName(isExistUserDto.getName());
 
         if (userByName == null) {
             return new ResFormat(true, 200L, "해당 이름의 user가 존재하지 않습니다.");
