@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.Id;
+import java.util.LinkedList;
 import java.util.List;
 
 @Data
@@ -37,7 +38,7 @@ public class UserRedis {
             log.error("------직전위치랑 차이없음------");
             return;
         }
-        if (18 > distance){
+        if (1.38 > distance){
             log.error("------속도가 1미만------");
             return;
         }
@@ -45,13 +46,16 @@ public class UserRedis {
         this.distance += distance;
         this.time += 5;
         this.curLocation = location;
+        if (locations == null) {
+            locations = new LinkedList<>();
+        }
         locations.add(location);
         log.error("------위치업데이트------");
 
     }
 
     public void resetLocations() {
-        locations.clear();
+        locations = new LinkedList<>();
     }
 
     public void resetDistance() {

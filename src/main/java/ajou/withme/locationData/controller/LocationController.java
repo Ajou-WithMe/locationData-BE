@@ -12,6 +12,7 @@ import ajou.withme.locationData.service.UserService;
 import ajou.withme.locationData.util.ResFormat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -24,6 +25,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/location")
 public class LocationController {
+
+    @Value("${batchSize}")
+    private int batchSize;
 
     private final UserService userService;
     private final UserRedisService userRedisService;
@@ -43,8 +47,6 @@ public class LocationController {
         UserRedis userRedis = userRedisService.findUserRedisById(saveLocationDto.getName());
 
         Double distance = saveLocationDto.getSpeed() / 3.6 * 5;
-        System.out.println("distance = " + distance);
-        System.out.println("saveLocationDto.getSpeed() = " + saveLocationDto.getSpeed());
         LocationRedis location = new LocationRedis(saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), new Date());
 
         if (userRedis == null) {
@@ -66,7 +68,7 @@ public class LocationController {
         }
 
         // 만약 리스트 숫자가 일정이상(ex) 36개 3분)이 되면 배치작업으로 다 넣어버림. -> user에 거리, 시간. location
-        if (userRedis.getLocations().size() >= 36) {
+        if (userRedis.getLocations().size() >= batchSize) {
             // user update
             userByName.addTime(userRedis.getTime());
             userByName.addDistance(userRedis.getDistance());
