@@ -20,6 +20,11 @@ public class UserController {
         User user = saveUserDto.toEntity();
         userService.saveUser(user);
 
+        User userByName = userService.findUserByName(user.getName());
+        if (userByName != null) {
+            return new ResFormat(false, 400L, "해당 이름의 user가 이미 존재합니다.");
+        }
+
         return new ResFormat(true, 201L, user);
     }
 
