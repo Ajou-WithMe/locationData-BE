@@ -42,8 +42,9 @@ public class LocationController {
         // 레디스 : userName을 키로 현재위치 바꾸고, locations 리스트로 계속 담고, 속도도 5초 속도로 계산해서 거리, 시간 담고
         UserRedis userRedis = userRedisService.findUserRedisById(saveLocationDto.getName());
 
-        Double distance = saveLocationDto.getSpeed() * 3.6 * 5;
-
+        Double distance = saveLocationDto.getSpeed() / 3.6 * 5;
+        System.out.println("distance = " + distance);
+        System.out.println("saveLocationDto.getSpeed() = " + saveLocationDto.getSpeed());
         LocationRedis location = new LocationRedis(saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), new Date());
 
         if (userRedis == null) {
