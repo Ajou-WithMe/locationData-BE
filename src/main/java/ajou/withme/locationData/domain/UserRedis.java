@@ -37,6 +37,10 @@ public class UserRedis {
             log.error("------직전위치랑 차이없음------");
             return;
         }
+        if (18 > distance){
+            log.error("------속도가 1미만------");
+            return;
+        }
 
         this.distance += distance;
         this.time += 5;
