@@ -33,6 +33,10 @@ public class UserRedis {
         double longitudeAbs = Math.abs(this.curLocation.getLongitude() - location.getLongitude());
         double locationDistance = Math.sqrt(Math.pow(latitudeAbs, 2) + Math.pow(longitudeAbs, 2));
 
+        if (locations == null) {
+            locations = new LinkedList<>();
+        }
+
         // 약 10미터 이상 차이가 나면 업데이트
         if (0.0001 > locationDistance) {
             log.error("------직전위치랑 차이없음------");
@@ -46,9 +50,6 @@ public class UserRedis {
         this.distance += distance;
         this.time += 5;
         this.curLocation = location;
-        if (locations == null) {
-            locations = new LinkedList<>();
-        }
         locations.add(location);
         log.error("------위치업데이트------");
 
