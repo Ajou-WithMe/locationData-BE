@@ -9,6 +9,7 @@ import ajou.withme.locationData.repository.LocationJdbcRepository;
 import ajou.withme.locationData.service.LocationService;
 import ajou.withme.locationData.service.UserRedisService;
 import ajou.withme.locationData.service.UserService;
+import ajou.withme.locationData.util.CalculateDistance;
 import ajou.withme.locationData.util.ResFormat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,8 @@ public class LocationController {
         UserRedis userRedis = userRedisService.findUserRedisById(saveLocationDto.getName());
 
         Double distance = saveLocationDto.getSpeed() / 3.6 * 5;
+        Long time = 5L;
+
         LocationRedis location = new LocationRedis(saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), new Date());
 
         if (userRedis == null) {
@@ -63,8 +66,15 @@ public class LocationController {
             log.error("------레디스캐시 비어있음------");
 
         } else {
+            // 거리 계산. 직전 위치 시간과 10초 이상 차이가 안나면, 거리로 계산. 10초 이상 차이나면, 받아온 속도로 계산
+            if (userRedis.getCurLocation().getCreatedAt().after(new Date(System.currentTimeMillis()-10000))) {
+//            10초 차이가 안남.
+                distance = CalculateDistance.distance(userRedis.getCurLocation().getLatitude(), userRedis.getCurLocation().getLongitude(), saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), "meter");
+                time = (new Date().getTime() - userRedis.getCurLocation().getCreatedAt().getTime()) / 1000;
+             }
+
             // 현재 위치랑 차이가 크지 않으면 버림. 레디스에 안넣음.
-            userRedis.updateUserRedis(distance, location);
+            userRedis.updateUserRedis(distance, location, time);
         }
 
         // 만약 리스트 숫자가 일정이상(ex) 36개 3분)이 되면 배치작업으로 다 넣어버림. -> user에 거리, 시간. location

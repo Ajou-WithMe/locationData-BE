@@ -27,7 +27,7 @@ public class UserRedis {
     private LocationRedis curLocation;
     private List<LocationRedis> locations;
 
-    public void updateUserRedis(Double distance, LocationRedis location) {
+    public void updateUserRedis(Double distance, LocationRedis location, Long time) {
 
         double latitudeAbs = Math.abs(this.curLocation.getLatitude() - location.getLatitude());
         double longitudeAbs = Math.abs(this.curLocation.getLongitude() - location.getLongitude());
@@ -48,7 +48,7 @@ public class UserRedis {
         }
 
         this.distance += distance;
-        this.time += 5;
+        this.time += time;
         this.curLocation = location;
         locations.add(location);
         log.error("------위치업데이트------");
