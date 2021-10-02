@@ -67,9 +67,9 @@ public class LocationController {
 
         } else {
             // 거리 계산. 직전 위치 시간과 10초 이상 차이가 안나면, 거리로 계산. 10초 이상 차이나면, 받아온 속도로 계산
-            if (userRedis.getCurLocation().getCreatedAt().after(new Date(System.currentTimeMillis()-10000))) {
+            if (userRedis.getCurLocation().getCreatedAt().after(new Date(System.currentTimeMillis()-10000)) && saveLocationDto.getSpeed() > 5.0D) {
 //            10초 차이가 안남.
-                log.error("------직전위치 10초 이상 차이 안남------");
+                log.error("------직전위치 10초 이상 차이 안남 && 스피드 5보다 빠름------");
                 distance = CalculateDistance.distance(userRedis.getCurLocation().getLatitude(), userRedis.getCurLocation().getLongitude(), saveLocationDto.getLatitude(), saveLocationDto.getLongitude(), "meter");
                 time = (new Date().getTime() - userRedis.getCurLocation().getCreatedAt().getTime()) / 1000;
                 log.error("------new distance------ : "+ distance);
