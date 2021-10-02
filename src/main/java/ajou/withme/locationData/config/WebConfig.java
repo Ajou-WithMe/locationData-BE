@@ -18,10 +18,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public CommonsRequestLoggingFilter commonsRequestLoggingFilter() {
         CommonsRequestLoggingFilter c = new CommonsRequestLoggingFilter();
-        c.setIncludeHeaders(true);
+        c.setIncludeHeaders(false);
         c.setIncludeQueryString(true);
         c.setIncludePayload(true);
-        c.setIncludeClientInfo(true);
+        c.setIncludeClientInfo(false);
         c.setMaxPayloadLength(100000);
         return c;
 
