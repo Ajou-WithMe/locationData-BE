@@ -1,4 +1,4 @@
-package ajou.withme.locationData.dto;
+package ajou.withme.locationData.dto.request;
 
 import lombok.Data;
 

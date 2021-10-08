@@ -3,19 +3,24 @@ package ajou.withme.locationData.controller;
 import ajou.withme.locationData.dao.LocationRedis;
 import ajou.withme.locationData.domain.Location;
 import ajou.withme.locationData.domain.User;
+import ajou.withme.locationData.domain.UserOption;
 import ajou.withme.locationData.domain.UserRedis;
-import ajou.withme.locationData.dto.SaveLocationDto;
+import ajou.withme.locationData.dto.request.SaveLocationDto;
+import ajou.withme.locationData.dto.response.GetAllLocatoinDto;
 import ajou.withme.locationData.repository.LocationJdbcRepository;
 import ajou.withme.locationData.service.LocationService;
+import ajou.withme.locationData.service.UserOptionService;
 import ajou.withme.locationData.service.UserRedisService;
 import ajou.withme.locationData.service.UserService;
 import ajou.withme.locationData.util.CalculateDistance;
+import ajou.withme.locationData.util.JwtTokenUtil;
 import ajou.withme.locationData.util.ResFormat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -34,18 +39,22 @@ public class LocationController {
     private final UserRedisService userRedisService;
     private final LocationJdbcRepository locationJdbcRepository;
     private final LocationService locationService;
+    private final UserOptionService userOptionService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping
-    public ResFormat saveLocation(@RequestBody SaveLocationDto saveLocationDto) {
+    public ResFormat saveLocation(HttpServletRequest request, @RequestBody SaveLocationDto saveLocationDto) {
 
-        User userByName = userService.findUserByName(saveLocationDto.getName());
+        String uid = jwtTokenUtil.getSubject(request);
+        User userByName = userService.findUserByUid(uid);
+        UserOption userOptionByUser = userOptionService.findUserOptionByUser(userByName);
 
         if (userByName == null) {
             return new ResFormat(false, 400L, "해당하는 user가 없습니다.");
         }
 
-        // 레디스 : userName을 키로 현재위치 바꾸고, locations 리스트로 계속 담고, 속도도 5초 속도로 계산해서 거리, 시간 담고
-        UserRedis userRedis = userRedisService.findUserRedisById(saveLocationDto.getName());
+        // 레디스 : uid을 키로 현재위치 바꾸고, locations 리스트로 계속 담고, 속도도 5초 속도로 계산해서 거리, 시간 담고
+        UserRedis userRedis = userRedisService.findUserRedisById(uid);
 
         Double distance = saveLocationDto.getSpeed() / 3.6 * 5;
         Long time = 5L;
@@ -57,7 +66,7 @@ public class LocationController {
             locationRedisList.add(location);
 
             userRedis = UserRedis.builder()
-                    .id(saveLocationDto.getName())
+                    .id(uid)
                     .curLocation(location)
                     .locations(locationRedisList)
                     .distance(distance)
@@ -83,9 +92,9 @@ public class LocationController {
         // 만약 리스트 숫자가 일정이상(ex) 36개 3분)이 되면 배치작업으로 다 넣어버림. -> user에 거리, 시간. location
         if (userRedis.getLocations().size() >= batchSize) {
             // user update
-            userByName.addTime(userRedis.getTime());
-            userByName.addDistance(userRedis.getDistance());
-            userService.saveUser(userByName);
+            userOptionByUser.addTime(userRedis.getTime());
+            userOptionByUser.addDistance(userRedis.getDistance());
+            userOptionService.saveUser(userOptionByUser);
 
             // batch location 넣기
             List<LocationRedis> locations = userRedis.getLocations();
@@ -115,10 +124,29 @@ public class LocationController {
 
 
     @GetMapping("/redis")
-    public ResFormat getUserRedis(@RequestParam String name) {
-        UserRedis userRedis = userRedisService.findUserRedisById(name);
+    public ResFormat getUserRedis(HttpServletRequest request) {
+        String uid = jwtTokenUtil.getSubject(request);
+        UserRedis userRedis = userRedisService.findUserRedisById(uid);
 
         return new ResFormat(true, 200L, userRedis);
+    }
+
+    @GetMapping
+    public ResFormat getAllLocatoin(HttpServletRequest request) {
+        String uid = jwtTokenUtil.getSubject(request);
+        User userByUid = userService.findUserByUid(uid);
+
+
+        List<Location> allLocationByUser = locationService.findAllLocationByUser(userByUid);
+
+        List<GetAllLocatoinDto> locations = new LinkedList<>();
+        for (Location location:allLocationByUser
+             ) {
+            GetAllLocatoinDto getAllLocatoin = new GetAllLocatoinDto(location.getLatitude(), location.getLongitude(), location.getCreatedAt(), location.getUser().getName());
+            locations.add(getAllLocatoin);
+        }
+
+        return new ResFormat(true, 200L, locations);
     }
 
     @PostMapping("/test")

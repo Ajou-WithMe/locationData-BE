@@ -1,5 +1,6 @@
 package ajou.withme.locationData.domain;
 
+import ajou.withme.locationData.dto.response.GetAllLocatoinDto;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -29,4 +30,5 @@ public class Location {
     @ManyToOne
     @JoinColumn
     private User user;
+
 }

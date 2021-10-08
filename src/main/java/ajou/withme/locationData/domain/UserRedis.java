@@ -1,7 +1,6 @@
 package ajou.withme.locationData.domain;
 
 import ajou.withme.locationData.dao.LocationRedis;
-import ajou.withme.locationData.dto.SaveLocationDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
