@@ -45,4 +45,8 @@ public class UserOption {
     public void addDistance(Double distance) {
         this.distance += distance;
     }
+
+    public void updateCurrentNetwork() {
+        this.currentNetwork = new Date();
+    }
 }

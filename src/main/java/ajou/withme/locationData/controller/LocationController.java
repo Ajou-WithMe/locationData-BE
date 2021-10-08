@@ -56,6 +56,9 @@ public class LocationController {
         // 레디스 : uid을 키로 현재위치 바꾸고, locations 리스트로 계속 담고, 속도도 5초 속도로 계산해서 거리, 시간 담고
         UserRedis userRedis = userRedisService.findUserRedisById(uid);
 
+//       current network time update
+        userOptionByUser.updateCurrentNetwork();
+
         Double distance = saveLocationDto.getSpeed() / 3.6 * 5;
         Long time = 5L;
 
@@ -94,7 +97,6 @@ public class LocationController {
             // user update
             userOptionByUser.addTime(userRedis.getTime());
             userOptionByUser.addDistance(userRedis.getDistance());
-            userOptionService.saveUser(userOptionByUser);
 
             // batch location 넣기
             List<LocationRedis> locations = userRedis.getLocations();
@@ -115,6 +117,9 @@ public class LocationController {
 
             log.error("------batch 작업------");
         }
+
+
+        userOptionService.saveUser(userOptionByUser);
 
         userRedisService.saveUserRedis(userRedis);
         log.error("------레디스캐시 세이브------");
