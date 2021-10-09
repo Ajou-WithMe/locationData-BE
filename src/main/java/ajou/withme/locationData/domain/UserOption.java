@@ -25,14 +25,16 @@ public class UserOption {
     private boolean pushAlarm;
 
     // 세이프존 테이블이 2개니까, 신규 유저인지 확인하는 칼럼. true면 신규유저, false면 새로 safe존을 만든것
-    private boolean isNewSafeZone;
-    
+    private boolean isInitSafeZone;
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date currentNetwork;
 
     private Long time;
     private Double distance;
+
+    private Double boxSize;
 
     @JoinColumn
     @OneToOne

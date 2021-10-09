@@ -51,32 +51,9 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserOption userOption;
 
-    public void updatePwd(String pwd) {
-        this.pwd = pwd;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<SafeZone> safeZone;
 
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    public void updateAddress(String addr) {
-        this.address = addr;
-    }
-
-    public void updatePhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void updateProfileImg(String profileImg) {
-        this.profileImg = profileImg;
-    }
-
-    public UserOption initUserOptionEntity() {
-        return UserOption.builder()
-                .user(this)
-                .isNewSafeZone(true)
-                .pushAlarm(true)
-                .safeMove(false)
-                .build();
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<InitSafeZone> initSafeZone;
 }
