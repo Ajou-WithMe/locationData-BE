@@ -128,12 +128,18 @@ public class LocationController {
     }
 
 
-    @GetMapping("/redis")
-    public ResFormat getUserRedis(HttpServletRequest request) {
-        String uid = jwtTokenUtil.getSubject(request);
+    @GetMapping("/current")
+    public ResFormat getUserCurrentLocation(HttpServletRequest request, @RequestParam String uid) {
+        if (uid == "") {
+            uid = jwtTokenUtil.getSubject(request);
+        }
         UserRedis userRedis = userRedisService.findUserRedisById(uid);
 
-        return new ResFormat(true, 200L, userRedis);
+        if (userRedis == null) {
+            return new ResFormat(false, 400L, "해당 유저의 최근 위치가 없습니다.");
+        }
+
+        return new ResFormat(true, 200L, userRedis.getCurLocation());
     }
 
     @GetMapping
