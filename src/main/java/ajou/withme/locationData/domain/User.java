@@ -59,4 +59,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<InitSafeZone> initSafeZone;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ZoneLocation> zoneLocation;
 }

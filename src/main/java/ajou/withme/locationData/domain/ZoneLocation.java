@@ -24,4 +24,8 @@ public class ZoneLocation {
     @JoinColumn
     @ManyToOne
     private SafeZone safeZone;
+
+    @JoinColumn
+    @ManyToOne
+    private User user;
 }
