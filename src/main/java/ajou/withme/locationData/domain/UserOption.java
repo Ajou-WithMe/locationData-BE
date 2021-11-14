@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -56,6 +57,7 @@ public class UserOption {
     }
 
     public void updateCurrentNetwork() {
-        this.currentNetwork = new Date();
+        System.out.println();
+        this.currentNetwork = new Timestamp(System.currentTimeMillis());
     }
 }
