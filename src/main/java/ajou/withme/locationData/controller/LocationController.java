@@ -47,9 +47,9 @@ public class LocationController {
 
         String uid = jwtTokenUtil.getSubject(request);
         User userByName = userService.findUserByUid(uid);
-        System.out.println(userByName.getName());
+
         UserOption userOptionByUser = userOptionService.findUserOptionByUser(userByName);
-        System.out.println("userOptionByUser.getUser().getName() = " + userOptionByUser.getUser().getName());
+
         if (userByName == null) {
             return new ResFormat(false, 400L, "해당하는 user가 없습니다.");
         }
