@@ -64,5 +64,8 @@ public class User {
     private List<ZoneLocation> zoneLocation;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<VisitOften> visitOftens;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PredictionLocation> predictionLocations;
 }
