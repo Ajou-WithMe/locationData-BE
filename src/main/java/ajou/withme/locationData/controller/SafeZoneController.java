@@ -1,14 +1,11 @@
 package ajou.withme.locationData.controller;
 
-import ajou.withme.locationData.domain.InitSafeZone;
-import ajou.withme.locationData.domain.User;
-import ajou.withme.locationData.domain.ZoneLocation;
+import ajou.withme.locationData.domain.*;
 import ajou.withme.locationData.dto.LocationDto;
 import ajou.withme.locationData.dto.SafeZone.request.SaveInitSafeZoneRequest;
-import ajou.withme.locationData.service.InitSafeZoneService;
-import ajou.withme.locationData.service.UserOptionService;
-import ajou.withme.locationData.service.UserService;
-import ajou.withme.locationData.service.ZoneLocationService;
+import ajou.withme.locationData.dto.visitOften.response.FindVisitOftenDto;
+import ajou.withme.locationData.dto.visitOften.response.MissingUserResonse;
+import ajou.withme.locationData.service.*;
 import ajou.withme.locationData.util.JwtTokenUtil;
 import ajou.withme.locationData.util.ResFormat;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +27,8 @@ public class SafeZoneController {
     private final JwtTokenUtil jwtTokenUtil;
     private final InitSafeZoneService initSafeZoneService;
     private final ZoneLocationService zoneLocationService;
+    private final VisitOftenService visitOftenService;
+    private final UserRedisService userRedisService;
 
     @GetMapping
     public ResFormat findSafeZone(HttpServletRequest request) {
@@ -44,9 +44,26 @@ public class SafeZoneController {
             locationDtos.add(locationDto);
         }
 
-
-
         return new ResFormat(true, 200L, locationDtos);
+    }
+
+    @GetMapping("/missing")
+    public ResFormat findVisitOften(HttpServletRequest request) {
+        String uid = jwtTokenUtil.getSubject(request);
+        User userByUid = userService.findUserByUid(uid);
+
+        List<FindVisitOftenDto> visitOftenDto = visitOftenService.findVisitOftenDto(userByUid.getId());
+
+        UserOption userOptionByUser = userOptionService.findUserOptionByUser(userByUid);
+        Long time = (System.currentTimeMillis() - userOptionByUser.getCurrentNetwork().getTime()) / 1000; // 초
+        System.out.println("time = " + time);
+
+        UserRedis userRedisById = userRedisService.findUserRedisById(uid);
+        Double speed = userRedisById.getSpeed(); // 시속
+
+        Double distance = time * speed / 3.6; // 미터
+
+        return new ResFormat(true, 200L, new MissingUserResonse(visitOftenDto, distance));
     }
 
     @PostMapping("/init")

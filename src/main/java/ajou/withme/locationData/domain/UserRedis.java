@@ -25,6 +25,7 @@ public class UserRedis {
     private Long time;
     private LocationRedis curLocation;
     private List<LocationRedis> locations;
+    private Double speed;
 
     public void updateUserRedis(Double distance, LocationRedis location, Long time) {
 
@@ -64,5 +65,9 @@ public class UserRedis {
 
     public void resetTime() {
         this.time = 0L;
+    }
+
+    public void updateSpeed(Double speed) {
+        this.speed = speed;
     }
 }

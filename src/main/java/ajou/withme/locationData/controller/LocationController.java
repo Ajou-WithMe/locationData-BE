@@ -75,6 +75,7 @@ public class LocationController {
                     .curLocation(location)
                     .locations(locationRedisList)
                     .distance(distance)
+                    .speed(saveLocationDto.getSpeed())
                     .time(5L)
                     .build();
             log.error("------레디스캐시 비어있음------");
@@ -92,6 +93,7 @@ public class LocationController {
 
             // 현재 위치랑 차이가 크지 않으면 버림. 레디스에 안넣음.
             userRedis.updateUserRedis(distance, location, time);
+            userRedis.updateSpeed(saveLocationDto.getSpeed());
         }
 
         // 만약 리스트 숫자가 일정이상(ex) 36개 3분)이 되면 배치작업으로 다 넣어버림. -> user에 거리, 시간. location

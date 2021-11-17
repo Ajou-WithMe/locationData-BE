@@ -15,7 +15,7 @@ public class UserRedisService {
         return userRedisRepository.save(userRedis);
     }
 
-    public UserRedis findUserRedisById(String name) {
-        return userRedisRepository.findById(name).orElse(null);
+    public UserRedis findUserRedisById(String uid) {
+        return userRedisRepository.findById(uid).orElse(null);
     }
 }
