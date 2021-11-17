@@ -31,8 +31,7 @@ public class SafeZoneController {
     private final UserRedisService userRedisService;
 
     @GetMapping
-    public ResFormat findSafeZone(HttpServletRequest request) {
-        String uid = jwtTokenUtil.getSubject(request);
+    public ResFormat findSafeZone(@RequestParam String uid) {
         User userByUid = userService.findUserByUid(uid);
 
         List<LocationDto> locationDtos = new LinkedList<>();
@@ -48,8 +47,7 @@ public class SafeZoneController {
     }
 
     @GetMapping("/missing")
-    public ResFormat findVisitOften(HttpServletRequest request) {
-        String uid = jwtTokenUtil.getSubject(request);
+    public ResFormat findVisitOften(@RequestParam String uid) {
         User userByUid = userService.findUserByUid(uid);
 
         List<FindVisitOftenDto> visitOftenDto = visitOftenService.findVisitOftenDto(userByUid.getId());
