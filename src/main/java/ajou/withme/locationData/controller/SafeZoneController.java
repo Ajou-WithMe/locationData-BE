@@ -56,7 +56,6 @@ public class SafeZoneController {
 
         UserOption userOptionByUser = userOptionService.findUserOptionByUser(userByUid);
         Long time = (System.currentTimeMillis() - userOptionByUser.getCurrentNetwork().getTime()) / 1000; // 초
-        System.out.println("time = " + time);
 
         UserRedis userRedisById = userRedisService.findUserRedisById(uid);
         Double speed = userRedisById.getSpeed(); // 시속

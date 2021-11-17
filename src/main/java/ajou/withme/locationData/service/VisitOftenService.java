@@ -22,7 +22,7 @@ public class VisitOftenService {
 
         for (Object[] location:
                 allVisitOftenByUserId) {
-            FindVisitOftenDto locationDto = new FindVisitOftenDto((double)location[0], (double)location[1], (int)location[3]);
+            FindVisitOftenDto locationDto = new FindVisitOftenDto((double)location[0], (double)location[1], (int)location[2]);
             findVisitOftenDtos.add(locationDto);
         }
 
