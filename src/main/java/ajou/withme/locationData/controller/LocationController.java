@@ -59,6 +59,7 @@ public class LocationController {
 
 //       current network time update
         userOptionByUser.updateCurrentNetwork();
+        userOptionByUser.setIsDisconnected(0);
 
         Double distance = saveLocationDto.getSpeed() / 3.6 * 5;
         Long time = 5L;
