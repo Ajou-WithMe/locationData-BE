@@ -29,6 +29,7 @@ public class SafeZoneController {
     private final ZoneLocationService zoneLocationService;
     private final VisitOftenService visitOftenService;
     private final UserRedisService userRedisService;
+    private final PredictionLocationService predictionLocationService;
 
     @GetMapping
     public ResFormat findSafeZone(@RequestParam String uid) {
@@ -61,6 +62,22 @@ public class SafeZoneController {
         Double distance = time * speed / 3.6; // 미터
 
         return new ResFormat(true, 200L, new MissingUserResonse(visitOftenDto, distance));
+    }
+
+    @GetMapping("/prediction")
+    public ResFormat findPrediction(@RequestParam String uid) {
+        User userByUid = userService.findUserByUid(uid);
+
+        List<LocationDto> locationDtos = new LinkedList<>();
+
+        List<Object[]> allLocationByUserId = predictionLocationService.findAllLocationByUserId(userByUid.getId());
+        for (Object[] location:
+            allLocationByUserId) {
+            LocationDto locationDto = new LocationDto((double)location[0], (double)location[1]);
+            locationDtos.add(locationDto);
+        }
+
+        return new ResFormat(true, 200L, locationDtos);
     }
 
     @PostMapping("/init")
